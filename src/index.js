@@ -88,6 +88,14 @@ export class SmartSealAuth extends HTMLElement {
     }
   }
 
+  setImage(url) {
+    if(url) {
+      const imageEl = this.shadowRoot.querySelector('.tag-image');
+      imageEl.src = url;
+      imageEl.style.display = 'inline-block';
+    }
+  }
+
   async getTagData(variable) {
     let response = await fetch('https://staging.smartseal.io/api/authenticate/', {
       headers: {
@@ -119,6 +127,7 @@ export class SmartSealAuth extends HTMLElement {
         this.shadowRoot.getElementById('redeem').style.display = 'block';
         this.setNftAddress(data.tag.chain_id, data.tag.nft_owner_address, data.tag.nft_contract_address);
         this.setRedemptionUrl(data.tag.nft_redemption_url);
+        this.setImage(data.tag.image_location);
         break;
       case 2:
         statusIcon = iconSuccess;
@@ -127,6 +136,7 @@ export class SmartSealAuth extends HTMLElement {
         this.shadowRoot.getElementById('__status-box').style.display = 'block';
         this.setNftAddress(data.tag.chain_id, data.tag.nft_owner_address, data.tag.nft_contract_address);
         this.setRedemptionUrl(data.tag.nft_redemption_url);
+        this.setImage(data.tag.image_location);
         break;
       case 3:
         statusIcon = iconSuccess;
@@ -134,6 +144,7 @@ export class SmartSealAuth extends HTMLElement {
         this.shadowRoot.getElementById('status-message').style.display = 'none';
         this.shadowRoot.getElementById('__status-box').style.display = 'block';
         this.setNftAddress(data.tag.chain_id, data.tag.nft_owner_address, data.tag.nft_contract_address);
+        this.setImage(data.tag.image_location);
         break;
       case 4:
         statusIcon = iconError;
