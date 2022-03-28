@@ -190,6 +190,8 @@ a.btn.disabled, fieldset:disabled a.btn {
   bottom: -1px;
   width: 100%;
   z-index: 999999;
+  overflow-y: scroll;
+  height: 100%;
 }
 .auth-page-wrapper::before {
   content: '';
@@ -240,9 +242,12 @@ a.btn.disabled, fieldset:disabled a.btn {
 }
 .tag-image {
   margin-top: 10px;
-  max-height: 150px;
-  max-width: 100%;
+  height: 280px;
+  width: 210px;
+  object-fit: cover;
   vertical-align: top;
+  margin-bottom: 15px;
+  border: 1px solid #EAA218;
 }
 
 /* __Status box */
@@ -356,7 +361,8 @@ a.btn.disabled, fieldset:disabled a.btn {
 .er-logo {
   max-width: 100%;
   display: block;
-  margin: 0 0 20px;
+  margin: auto;
+  margin-bottom: 20px;
 }
 
 .er-social {
@@ -370,7 +376,7 @@ a.btn.disabled, fieldset:disabled a.btn {
   display: block;
   width: 0;
   flex-grow: 1;
-  max-width: 100px;
+  max-width: 60px;
 }
 
 .er-social__icon {
@@ -392,7 +398,7 @@ a.btn.disabled, fieldset:disabled a.btn {
 
     <!-- icon header -->
     <div class="__header">
-      <img class="er-logo" src="http://localhost/authentication-page/assets/er-logo.png">
+      <img class="er-logo" src="https://eternal-royals-public.s3.us-west-2.amazonaws.com/smart-seal/er-logo.png">
 
       <img class="tag-image" style="display: none;">
 
@@ -424,17 +430,17 @@ a.btn.disabled, fieldset:disabled a.btn {
 
     <!-- Social Links -->
     <div class="er-social">
-      <a class="er-social__link" href="">
-        <img class="er-social__icon" src="http://localhost/authentication-page/assets/er-twitter.png">
+      <a class="er-social__link" href="https://twitter.com/EternalRoyals_" target="_blank">
+        <img class="er-social__icon" src="https://eternal-royals-public.s3.us-west-2.amazonaws.com/smart-seal/er-twitter.png">
       </a>
-      <a class="er-social__link" href="">
-        <img class="er-social__icon" src="http://localhost/authentication-page/assets/er-opensea.png">
+      <a class="er-social__link" href="https://opensea.io/collection/eternalroyals" target="_blank">
+        <img class="er-social__icon" src="https://eternal-royals-public.s3.us-west-2.amazonaws.com/smart-seal/er-opensea.png">
       </a>
-      <a class="er-social__link" href="">
-        <img class="er-social__icon" src="http://localhost/authentication-page/assets/er-ig.png">
+      <a class="er-social__link" href="https://www.instagram.com/eternalroyals_" target="_blank">
+        <img class="er-social__icon" src="https://eternal-royals-public.s3.us-west-2.amazonaws.com/smart-seal/er-ig.png">
       </a>
-      <a class="er-social__link" href="">
-        <img class="er-social__icon" src="http://localhost/authentication-page/assets/er-discord.png">
+      <a class="er-social__link" href="https://discord.gg/nDQbPNtcdc" target="_blank">
+        <img class="er-social__icon" src="https://eternal-royals-public.s3.us-west-2.amazonaws.com/smart-seal/er-discord.png">
       </a>
     </div>
 
