@@ -108,7 +108,7 @@ export class SmartSealAuth extends HTMLElement {
       body: JSON.stringify(variable)
     });
     let data = await response.text();
-    data = JSON.parse(data);
+    data = this.parseTagData(data);
 
     let statusIcon;
     let statusType;
@@ -189,6 +189,19 @@ export class SmartSealAuth extends HTMLElement {
     this.show();
 
     return data;
+  }
+
+  parseTagData(data){
+    let parsedData = JSON.parse(data);
+    const hexTokenId = parsedData.tag.nft_token_id;
+    if (hexTokenId) {
+      parsedData.tag.nft_token_id = this.hexToInt(hexTokenId);
+    }
+    return parsedData;
+  }
+
+  hexToInt(hexString){
+    return parseInt(hexString, 16)
   }
 
   injectFont(){
