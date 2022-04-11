@@ -131,7 +131,7 @@ export class SmartSealAuth extends HTMLElement {
         // this.shadowRoot.getElementById('redeem').style.display = 'block';
         this.setNftAddress(data.tag.chain_id, data.tag.nft_owner_address, data.tag.nft_contract_address);
         // this.setRedemptionUrl(data.tag.nft_redemption_url);
-        this.setImage(data.tag.image_location);
+        this.setImage('https://eternalroyals.io/api/v1/royals/' + data.tag.nft_token_id + '/image');
         break;
       case 2:
         statusIcon = iconSuccess;
