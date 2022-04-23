@@ -196,10 +196,6 @@ export class SmartSealAuth extends HTMLElement {
 
   parseTagData(data){
     let parsedData = JSON.parse(data);
-    // const hexTokenId = parsedData.tag.nft_token_id;
-    // if (hexTokenId) {
-    //   parsedData.tag.nft_token_id = this.hexToInt(hexTokenId);
-    // }
     return parsedData;
   }
 
