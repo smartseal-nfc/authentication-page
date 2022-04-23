@@ -133,8 +133,7 @@ export class SmartSealAuth extends HTMLElement {
         // this.shadowRoot.getElementById('redeem').style.display = 'block';
         this.setNftAddress(data.tag.chain_id, data.tag.nft_owner_address, data.tag.nft_contract_address);
         // this.setRedemptionUrl(data.tag.nft_redemption_url);
-        // this.setImage('https://eternalroyals.io/api/v1/royals/' + data.tag.nft_token_id + '/image');
-        this.setImage('https://eternalroyals.io/api/v1/royals/' + '3991' + '/image');
+        this.setImage('https://eternalroyals.io/api/v1/royals/' + data.tag.nft_token_id + '/image');
 
         break;
       case 2:
@@ -197,10 +196,10 @@ export class SmartSealAuth extends HTMLElement {
 
   parseTagData(data){
     let parsedData = JSON.parse(data);
-    const hexTokenId = parsedData.tag.nft_token_id;
-    if (hexTokenId) {
-      parsedData.tag.nft_token_id = this.hexToInt(hexTokenId);
-    }
+    // const hexTokenId = parsedData.tag.nft_token_id;
+    // if (hexTokenId) {
+    //   parsedData.tag.nft_token_id = this.hexToInt(hexTokenId);
+    // }
     return parsedData;
   }
 
