@@ -113,70 +113,82 @@ export class SmartSealAuth extends HTMLElement {
     let statusType;
     let statusMessage;
 
-    switch (data.scan.auth_stat) {
-      case 0:
-        statusIcon = iconError;
-        statusType = 'Error'
-        statusMessage = 'There was a problem authenticating this tag. Please contact info@smartseal.io for more information';
-        break;
-      case 1:
-        statusIcon = iconSuccess;
-        statusType = 'Authenticated'
-        this.shadowRoot.getElementById('status-message').style.display = 'none';
-        this.shadowRoot.getElementById('__status-box').style.display = 'block';
-        this.shadowRoot.getElementById('redeem').style.display = 'block';
-        this.setNftAddress(data.tag.chain_id, data.tag.nft_owner_address, data.tag.nft_contract_address);
-        this.setRedemptionUrl(data.tag.nft_redemption_url);
-        this.setImage(data.tag.image_location);
-        break;
-      case 2:
-        statusIcon = iconSuccess;
-        statusType = 'Authenticated and Sealed'
-        this.shadowRoot.getElementById('status-message').style.display = 'none';
-        this.shadowRoot.getElementById('__status-box').style.display = 'block';
-        this.setNftAddress(data.tag.chain_id, data.tag.nft_owner_address, data.tag.nft_contract_address);
-        this.setRedemptionUrl(data.tag.nft_redemption_url);
-        this.setImage(data.tag.image_location);
-        break;
-      case 3:
-        statusIcon = iconSuccess;
-        statusType = 'Authenticated and Unsealed'
-        this.shadowRoot.getElementById('status-message').style.display = 'none';
-        this.shadowRoot.getElementById('__status-box').style.display = 'block';
-        this.setNftAddress(data.tag.chain_id, data.tag.nft_owner_address, data.tag.nft_contract_address);
-        this.setImage(data.tag.image_location);
-        break;
-      case 4:
-        statusIcon = iconError;
-        statusType = 'Tag Not Active'
-        statusMessage = 'Here is where we can have the error message on this screen and the next action';
-        break;
-      case 5:
-        statusIcon = iconError;
-        statusType = 'Tag Not Active'
-        statusMessage = 'Here is where we can have the error message on this screen and the next action';
-        break;
-      case 6:
-        statusIcon = iconError;
-        statusType = 'Tag Not Active'
-        statusMessage = 'Here is where we can have the error message on this screen and the next action';
-        break;
-      case 7:
+    if(data.tag?.is_lost_or_stolen) {
+      statusIcon = iconError;
+      statusType = 'This item is lost or stolen';
+      this.shadowRoot.querySelector('.auth-page').classList.add('auth-page--lost');
+      this.shadowRoot.getElementById('status-message').style.display = 'none';
+      this.shadowRoot.getElementById('__status-box').style.display = 'block';
+      if(data.tag.nft_owner_contact) this.shadowRoot.getElementById('contact').parentElement.style.display = '';
+      this.setNftAddress(data.tag.chain_id, data.tag.nft_owner_address, data.tag.nft_contract_address);
+      this.setImage(data.tag.image_location);
+    } else {
+      switch (data.scan.auth_stat) {
+        case 0:
+          statusIcon = iconError;
+          statusType = 'Error'
+          statusMessage = 'There was a problem authenticating this tag. Please contact info@smartseal.io for more information';
+          break;
+        case 1:
+          statusIcon = iconSuccess;
+          statusType = 'Authenticated'
+          this.shadowRoot.getElementById('status-message').style.display = 'none';
+          this.shadowRoot.getElementById('__status-box').style.display = 'block';
+          this.shadowRoot.getElementById('redeem').style.display = 'block';
+          this.setNftAddress(data.tag.chain_id, data.tag.nft_owner_address, data.tag.nft_contract_address);
+          this.setRedemptionUrl(data.tag.nft_redemption_url);
+          this.setImage(data.tag.image_location);
+          break;
+        case 2:
+          statusIcon = iconSuccess;
+          statusType = 'Authenticated and Sealed'
+          this.shadowRoot.getElementById('status-message').style.display = 'none';
+          this.shadowRoot.getElementById('__status-box').style.display = 'block';
+          this.setNftAddress(data.tag.chain_id, data.tag.nft_owner_address, data.tag.nft_contract_address);
+          this.setRedemptionUrl(data.tag.nft_redemption_url);
+          this.setImage(data.tag.image_location);
+          break;
+        case 3:
+          statusIcon = iconSuccess;
+          statusType = 'Authenticated and Unsealed'
+          this.shadowRoot.getElementById('status-message').style.display = 'none';
+          this.shadowRoot.getElementById('__status-box').style.display = 'block';
+          this.setNftAddress(data.tag.chain_id, data.tag.nft_owner_address, data.tag.nft_contract_address);
+          this.setImage(data.tag.image_location);
+          break;
+        case 4:
+          statusIcon = iconError;
+          statusType = 'Tag Not Active'
+          statusMessage = 'Here is where we can have the error message on this screen and the next action';
+          break;
+        case 5:
+          statusIcon = iconError;
+          statusType = 'Tag Not Active'
+          statusMessage = 'Here is where we can have the error message on this screen and the next action';
+          break;
+        case 6:
+          statusIcon = iconError;
+          statusType = 'Tag Not Active'
+          statusMessage = 'Here is where we can have the error message on this screen and the next action';
+          break;
+        case 7:
           statusIcon = iconWarning;
           statusType = 'Authentication Token Expired'
           statusMessage = 'Please rescan tag';
           break;
-      case 8:
-        statusIcon = iconError;
-        statusType = 'Authentication Code Not Valid'
-        statusMessage = 'Here is where we can have the error message on this screen and the next action';
-        break;
-      default:
-        statusIcon = iconError;
-        statusType = 'Error'
-        statusMessage = 'There was a problem authenticating this tag. Please contact info@smartseal.io for more information';
-        break;
+        case 8:
+          statusIcon = iconError;
+          statusType = 'Authentication Code Not Valid'
+          statusMessage = 'Here is where we can have the error message on this screen and the next action';
+          break;
+        default:
+          statusIcon = iconError;
+          statusType = 'Error'
+          statusMessage = 'There was a problem authenticating this tag. Please contact info@smartseal.io for more information';
+          break;
+      }
     }
+
     this.shadowRoot.getElementById('status-icon').innerHTML = statusIcon;
     this.shadowRoot.getElementById('status-type').innerText = statusType;
     this.shadowRoot.getElementById('status-message').innerText = statusMessage;
