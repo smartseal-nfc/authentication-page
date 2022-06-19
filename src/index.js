@@ -97,7 +97,7 @@ export class SmartSealAuth extends HTMLElement {
   }
 
   async getTagData(variable) {
-    let response = await fetch('https://staging.smartseal.io/api/authenticate/', {
+    let response = await fetch('https://nft.smartseal.io/api/authenticate/', {
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json'
