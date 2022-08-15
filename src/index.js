@@ -31,12 +31,39 @@ export class SmartSealAuth extends HTMLElement {
     let queryVar = 'pl'
 
     var url_payload = this.getQueryVariable(queryVar);
-    // var post_data = { useragent: 'useragent string goes here', ip_address: '111.111.111.111', url_payload: '4D43652BD6DFD67F9359EEEB178BFD7AFBA2C1915C52AF90' };
-    var post_data = { useragent: 'useragent string goes here', ip_address: '111.111.111.111', url_payload: url_payload };
+    var post_data = { useragent: navigator.userAgent, url_payload: url_payload };
 
     if( post_data && post_data.url_payload ){
       this.getTagData(post_data);
     }
+
+    const pageTogglers = Array.from(this.shadowRoot.querySelectorAll('[data-show-page]'));
+    pageTogglers.forEach(toggler => {
+
+      toggler.addEventListener('click', () => {
+        const pageItems = Array.from(this.shadowRoot.querySelectorAll('[data-page]'));
+        pageItems.forEach(page => {
+          page.style.display = 'none';
+        });
+
+        const pageId = toggler.dataset.showPage;
+
+        const page = this.shadowRoot.querySelector(`[data-page="${pageId}"]`);
+        console.log(page, pageId);
+        if(page) page.style.display = 'block';
+      });
+    });
+
+    const detailsTogglers = Array.from(this.shadowRoot.querySelectorAll('.details-toggle'));
+    detailsTogglers.forEach(toggler => {
+      let hidden = true;
+      toggler.addEventListener('click', () => {
+        const details = toggler.parentElement.querySelector('.details');
+        hidden = !hidden;
+        details.classList.toggle('hidden', hidden);
+        toggler.innerText = hidden ? 'More' : 'Less';
+      });
+    });
   }
 
   getQueryVariable(queryVar) {
@@ -51,12 +78,8 @@ export class SmartSealAuth extends HTMLElement {
     console.log('Query variable %s not found', queryVar);
   }
 
-  toggleDescription() {
-    this.description.classList.toggle('hide');
-  }
-
   show() {
-    this.shadowRoot.querySelector('.auth-page-wrapper').style.display = 'block';
+    this.shadowRoot.querySelector('.auth-page-wrapper').style.display = 'flex';
   }
 
   hide() {
@@ -88,16 +111,16 @@ export class SmartSealAuth extends HTMLElement {
     }
   }
 
-  setImage(url) {
+  setImage(url, origin = 'tag') {
     if(url) {
-      const imageEl = this.shadowRoot.querySelector('.tag-image');
+      const imageEl = this.shadowRoot.querySelector(`.${origin}-image`);
       imageEl.src = url;
-      imageEl.style.display = 'inline-block';
+      imageEl.style.display = 'block';
     }
   }
 
   async getTagData(variable) {
-    let response = await fetch('https://staging.smartseal.io/api/authenticate/', {
+    let response = await fetch('https://loanmysole.smartseal.io/api/authenticate/', {
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json'
@@ -108,6 +131,20 @@ export class SmartSealAuth extends HTMLElement {
     });
     let data = await response.text();
     data = JSON.parse(data);
+
+    // TEST
+    // data.scan.auth_stat = 1;
+    // data.tag.image_location = 'http://localhost/authentication-page/placeholder-img.png';
+    // this.shadowRoot.querySelector('.tag-image').style.display = 'block';
+    // const productId = '5922496681021105R';
+    // const productId = '3617521092085R';
+    // END TEST
+
+    const productId = data.tag.nft_token_id;
+    const lmsResponse = await fetch('https://www.loanmysole.com/api/products/get/modalinfo/' + productId);
+    const lmsData = await lmsResponse.json();
+    data.lms = lmsData.data;
+    data.lms.connectedStr = data.lms.connected ? 'Yes' : 'No';
 
     let statusIcon;
     let statusType;
@@ -122,6 +159,7 @@ export class SmartSealAuth extends HTMLElement {
       if(data.tag.nft_owner_contact) this.shadowRoot.getElementById('contact').parentElement.style.display = '';
       this.setNftAddress(data.tag.chain_id, data.tag.nft_owner_address, data.tag.nft_contract_address);
       this.setImage(data.tag.image_location);
+      this.setImage(data.lms.productImage, 'lms');
     } else {
       switch (data.scan.auth_stat) {
         case 0:
@@ -138,6 +176,7 @@ export class SmartSealAuth extends HTMLElement {
           this.setNftAddress(data.tag.chain_id, data.tag.nft_owner_address, data.tag.nft_contract_address);
           this.setRedemptionUrl(data.tag.nft_redemption_url);
           this.setImage(data.tag.image_location);
+          this.setImage(data.lms.productImage, 'lms');
           break;
         case 2:
           statusIcon = iconSuccess;
@@ -147,6 +186,7 @@ export class SmartSealAuth extends HTMLElement {
           this.setNftAddress(data.tag.chain_id, data.tag.nft_owner_address, data.tag.nft_contract_address);
           this.setRedemptionUrl(data.tag.nft_redemption_url);
           this.setImage(data.tag.image_location);
+          this.setImage(data.lms.productImage, 'lms');
           break;
         case 3:
           statusIcon = iconSuccess;
@@ -155,6 +195,7 @@ export class SmartSealAuth extends HTMLElement {
           this.shadowRoot.getElementById('__status-box').style.display = 'block';
           this.setNftAddress(data.tag.chain_id, data.tag.nft_owner_address, data.tag.nft_contract_address);
           this.setImage(data.tag.image_location);
+          this.setImage(data.lms.productImage, 'lms');
           break;
         case 4:
           statusIcon = iconError;
@@ -192,6 +233,24 @@ export class SmartSealAuth extends HTMLElement {
     this.shadowRoot.getElementById('status-icon').innerHTML = statusIcon;
     this.shadowRoot.getElementById('status-type').innerText = statusType;
     this.shadowRoot.getElementById('status-message').innerText = statusMessage;
+
+    // Data that need parsing
+    ['shipBackBy', 'start', 'productProtection'].forEach(name => {
+      if(!data.lms[name]) {
+        const el = this.shadowRoot.querySelector(`[data-value="lms.${name}"]`);
+        el.parentElement.classList.add('hidden');
+      } else if (name !== 'productProtection' ) {
+        let date = data.lms[name].split('T')[0];
+        date = date.split('-');
+        date = `${date[1]}/${date[2]}/${date[0]}`;
+        data.lms[name] = date;
+      }
+    });
+
+    [ 'Background', 'Box', 'Chain', 'Earring', 'Exterior', 'Eyes', 'FacialHair', 'Headwear', 'Mouth' ].forEach(name => {
+      if(!data.lms[name]) data.lms[name] = 'None';
+    });
+
     bind(data, this.shadowRoot.querySelector('.auth-page'));
 
     this.show();
@@ -201,22 +260,6 @@ export class SmartSealAuth extends HTMLElement {
 
   injectFont(){
     var css = `
-      @font-face {
-        font-family: 'Inter';
-        font-style: normal;
-        font-weight: 400;
-        font-display: swap;
-        src: url(https://fonts.gstatic.com/s/inter/v3/UcC73FwrK3iLTeHuS_fvQtMwCp50KnMa1ZL7W0Q5nw.woff2) format('woff2');
-        unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
-      }
-      @font-face {
-        font-family: 'Inter';
-        font-style: normal;
-        font-weight: 700;
-        font-display: swap;
-        src: url(https://fonts.gstatic.com/s/inter/v3/UcC73FwrK3iLTeHuS_fvQtMwCp50KnMa1ZL7W0Q5nw.woff2) format('woff2');
-        unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
-      }
       @font-face {
         font-family: 'Roboto Mono';
         font-style: normal;
