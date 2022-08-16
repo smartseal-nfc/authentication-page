@@ -158,7 +158,7 @@ export class SmartSealAuth extends HTMLElement {
       this.shadowRoot.getElementById('__status-box').style.display = 'block';
       if(data.tag.nft_owner_contact) this.shadowRoot.getElementById('contact').parentElement.style.display = '';
       this.setNftAddress(data.tag.chain_id, data.tag.nft_owner_address, data.tag.nft_contract_address);
-      this.setImage(data.tag.image_location);
+      this.setImage(data.lms.nftImage);
       this.setImage(data.lms.productImage, 'lms');
     } else {
       switch (data.scan.auth_stat) {
@@ -175,7 +175,7 @@ export class SmartSealAuth extends HTMLElement {
           this.shadowRoot.getElementById('redeem').style.display = 'block';
           this.setNftAddress(data.tag.chain_id, data.tag.nft_owner_address, data.tag.nft_contract_address);
           this.setRedemptionUrl(data.tag.nft_redemption_url);
-          this.setImage(data.tag.image_location);
+          this.setImage(data.lms.nftImage);
           this.setImage(data.lms.productImage, 'lms');
           break;
         case 2:
@@ -185,7 +185,7 @@ export class SmartSealAuth extends HTMLElement {
           this.shadowRoot.getElementById('__status-box').style.display = 'block';
           this.setNftAddress(data.tag.chain_id, data.tag.nft_owner_address, data.tag.nft_contract_address);
           this.setRedemptionUrl(data.tag.nft_redemption_url);
-          this.setImage(data.tag.image_location);
+          this.setImage(data.lms.nftImage);
           this.setImage(data.lms.productImage, 'lms');
           break;
         case 3:
@@ -194,7 +194,7 @@ export class SmartSealAuth extends HTMLElement {
           this.shadowRoot.getElementById('status-message').style.display = 'none';
           this.shadowRoot.getElementById('__status-box').style.display = 'block';
           this.setNftAddress(data.tag.chain_id, data.tag.nft_owner_address, data.tag.nft_contract_address);
-          this.setImage(data.tag.image_location);
+          this.setImage(data.lms.nftImage);
           this.setImage(data.lms.productImage, 'lms');
           break;
         case 4:
