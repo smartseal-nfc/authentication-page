@@ -49,7 +49,6 @@ export class SmartSealAuth extends HTMLElement {
         const pageId = toggler.dataset.showPage;
 
         const page = this.shadowRoot.querySelector(`[data-page="${pageId}"]`);
-        console.log(page, pageId);
         if(page) page.style.display = 'block';
       });
     });
@@ -134,10 +133,9 @@ export class SmartSealAuth extends HTMLElement {
 
     // TEST
     // data.scan.auth_stat = 1;
-    // data.tag.image_location = 'http://localhost/authentication-page/placeholder-img.png';
-    // this.shadowRoot.querySelector('.tag-image').style.display = 'block';
     // const productId = '5922496681021105R';
     // const productId = '3617521092085R';
+    // const productId = '462150012112R';
     // END TEST
 
     const productId = data.tag.nft_token_id;
