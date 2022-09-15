@@ -400,6 +400,18 @@ a.value:hover {
   margin-top: 20px;
 }
 
+.lms-link {
+  display: block;
+  background-color: #999;
+  height: 34px;
+  margin: 12px 0;
+  color: #222;
+  line-height: 34px;
+  font-size: 16px;
+  font-weight: 600;
+  text-align: center;
+}
+
 </style>
 
 <div class="auth-page-wrapper" style="display: none;">
@@ -453,6 +465,13 @@ a.value:hover {
           <p>Owner: <span data-value="lms.owner"></span></p>
         </div>
 
+        <img class="lms-image" style="display: none;">
+
+        <!-- <a href="" style="background-color: #999; height: 34px; margin-top: 12px;"></a> -->
+        <a data-href="https://www.loanmysole.com/user/{owner}" class="lms-link">View More From This Owner</a>
+
+        <a data-href="https://www.loanmysole.com/browse?sizes={size}&brand={brand}" class="lms-link">View Similar Physi</a>
+
         <div class="details hidden">
           <div class="row align-items-center">
             <span class="key">Size:</span>
@@ -485,9 +504,7 @@ a.value:hover {
           </div>
         </div>
 
-        <button class="details-toggle">More</button>
-
-        <img class="lms-image" style="display: none;">
+        <button class="details-toggle">Info</button>
       </div>
 
     </div>
@@ -571,13 +588,9 @@ a.value:hover {
     </div>
 
     <!-- button -->
-    <div style="display: none;">
+    <!-- <div style="display: none;">
       <a id="redeem" class="btn btn-blue" target="_blank">Redeem NFT</a>
-    </div>
-
-    <div style="background-color: #999; height: 34px; margin-top: 12px;"></div>
-
-    <div style="background-color: #999; height: 34px; margin-top: 12px;"></div>
+    </div> -->
 
     <!-- copyright -->
     <div class="__copyright">

@@ -56,11 +56,12 @@ export class SmartSealAuth extends HTMLElement {
     const detailsTogglers = Array.from(this.shadowRoot.querySelectorAll('.details-toggle'));
     detailsTogglers.forEach(toggler => {
       let hidden = true;
+      const closedText = toggler.innerText;
       toggler.addEventListener('click', () => {
         const details = toggler.parentElement.querySelector('.details');
         hidden = !hidden;
         details.classList.toggle('hidden', hidden);
-        toggler.innerText = hidden ? 'More' : 'Less';
+        toggler.innerText = hidden ? closedText : 'Less';
       });
     });
   }
@@ -118,6 +119,18 @@ export class SmartSealAuth extends HTMLElement {
     }
   }
 
+  setLmsLinks(data) {
+    const links = Array.from(this.shadowRoot.querySelectorAll('.lms-link'));
+    links.forEach(link => {
+      let href = link.dataset.href;
+      const matches = href.match(/\{([^\}]*)\}/g);
+      matches.forEach(replaceable => {
+        href = href.split(replaceable).join( data[ replaceable.slice(1,-1) ] );
+      });;
+      link.href = href;
+    });
+  }
+
   async getTagData(variable) {
     let response = await fetch('https://loanmysole.smartseal.io/api/authenticate/', {
       headers: {
@@ -132,7 +145,8 @@ export class SmartSealAuth extends HTMLElement {
     data = JSON.parse(data);
 
     // TEST
-    // data.scan.auth_stat = 1;
+    const isTest = this.getQueryVariable('testauth');
+    if(isTest) data.scan.auth_stat = 1;
     // const productId = '5922496681021105R';
     // const productId = '3617521092085R';
     // const productId = '462150012112R';
@@ -170,11 +184,12 @@ export class SmartSealAuth extends HTMLElement {
           statusType = 'Authenticated'
           this.shadowRoot.getElementById('status-message').style.display = 'none';
           this.shadowRoot.getElementById('__status-box').style.display = 'block';
-          this.shadowRoot.getElementById('redeem').style.display = 'block';
+          // this.shadowRoot.getElementById('redeem').style.display = 'block';
+          // this.setRedemptionUrl(data.tag.nft_redemption_url);
           this.setNftAddress(data.tag.chain_id, data.tag.nft_owner_address, data.tag.nft_contract_address);
-          this.setRedemptionUrl(data.tag.nft_redemption_url);
           this.setImage(data.lms.nftImage);
           this.setImage(data.lms.productImage, 'lms');
+          this.setLmsLinks(data.lms);
           break;
         case 2:
           statusIcon = iconSuccess;
@@ -182,9 +197,9 @@ export class SmartSealAuth extends HTMLElement {
           this.shadowRoot.getElementById('status-message').style.display = 'none';
           this.shadowRoot.getElementById('__status-box').style.display = 'block';
           this.setNftAddress(data.tag.chain_id, data.tag.nft_owner_address, data.tag.nft_contract_address);
-          this.setRedemptionUrl(data.tag.nft_redemption_url);
           this.setImage(data.lms.nftImage);
           this.setImage(data.lms.productImage, 'lms');
+          this.setLmsLinks(data.lms);
           break;
         case 3:
           statusIcon = iconSuccess;
@@ -194,6 +209,7 @@ export class SmartSealAuth extends HTMLElement {
           this.setNftAddress(data.tag.chain_id, data.tag.nft_owner_address, data.tag.nft_contract_address);
           this.setImage(data.lms.nftImage);
           this.setImage(data.lms.productImage, 'lms');
+          this.setLmsLinks(data.lms);
           break;
         case 4:
           statusIcon = iconError;
