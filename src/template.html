@@ -110,6 +110,7 @@
 /* Typography */
 * {
   font-family: 'Inter', sans-serif;
+  box-sizing: border-box;
 }
 body {
   margin: 0;
@@ -192,10 +193,14 @@ a.btn.disabled, fieldset:disabled a.btn {
 /* Auth Page */
 .auth-page-wrapper {
   position: fixed;
-  bottom: -1px;
-  width: 100%;
+  bottom: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: auto;
   z-index: 999999;
 }
+
 .auth-page-wrapper::before {
   content: '';
   display: inline-block;
@@ -206,13 +211,17 @@ a.btn.disabled, fieldset:disabled a.btn {
   height: 100vh;
   background: rgba(0, 0, 0, 0.5);
 }
-.auth-page-wrapper .auth-page {
+
+.auth-page {
   position: relative;
   padding: 10px 20px;
+  width: 100%;
   color: white;
   background: var(--modal-bg);
   border-radius: 20px 20px 0 0;
+  margin-top: auto;
 }
+
 .auth-page--lost {
   --modal-bg: var(--theme-error);
   --modal-status-bg: var(--theme-error-gradient);
@@ -242,11 +251,21 @@ a.btn.disabled, fieldset:disabled a.btn {
   margin-right: -8px;
   vertical-align: text-bottom;
 }
-.tag-image {
+
+.tag-media {
   margin-top: 10px;
-  max-height: 150px;
-  max-width: 100%;
+  width: 100%;
+  display: none;
+  text-align: center;
+  border-radius: 24px;
+  overflow: hidden;
+}
+
+.tag-media img,
+.tag-media video {
   vertical-align: top;
+  max-height: 250px;
+  max-width: 100%;
 }
 
 /* __Status box */
@@ -386,7 +405,7 @@ a.btn.disabled, fieldset:disabled a.btn {
 
       <p id="status-message" class="text-muted m-0"></p>
 
-      <img class="tag-image" style="display: none;">
+      <div class="tag-media"></div>
     </div>
 
     <!-- status box -->

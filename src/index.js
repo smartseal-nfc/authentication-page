@@ -28,11 +28,10 @@ export class SmartSealAuth extends HTMLElement {
       this.hide();
     });
 
-    let queryVar = 'pl'
+    const queryVar = 'pl'
 
-    var url_payload = this.getQueryVariable(queryVar);
-    // var post_data = { useragent: 'useragent string goes here', ip_address: '111.111.111.111', url_payload: '4D43652BD6DFD67F9359EEEB178BFD7AFBA2C1915C52AF90' };
-    var post_data = { useragent: 'useragent string goes here', ip_address: '111.111.111.111', url_payload: url_payload };
+    const url_payload = this.getQueryVariable(queryVar);
+    const post_data = { useragent: navigator.userAgent, url_payload: url_payload };
 
     if( post_data && post_data.url_payload ){
       this.getTagData(post_data);
@@ -56,7 +55,7 @@ export class SmartSealAuth extends HTMLElement {
   }
 
   show() {
-    this.shadowRoot.querySelector('.auth-page-wrapper').style.display = 'block';
+    this.shadowRoot.querySelector('.auth-page-wrapper').style.display = 'flex';
   }
 
   hide() {
@@ -88,16 +87,37 @@ export class SmartSealAuth extends HTMLElement {
     }
   }
 
-  setImage(url) {
-    if(url) {
-      const imageEl = this.shadowRoot.querySelector('.tag-image');
-      imageEl.src = url;
-      imageEl.style.display = 'inline-block';
+  addMediaEl(el) {
+    const mediaEl = this.shadowRoot.querySelector('.tag-media');
+    mediaEl.appendChild(el);
+    mediaEl.style.display = 'block';
+  }
+
+  setMedia(url) {
+    if(!url) return;
+
+    const img_rgx = /^.*\.(jpg|jpeg|png|gif)$/i;
+
+    if( img_rgx.test(url) ) {
+      const img = document.createElement('img');
+      img.src = url;
+      this.addMediaEl(img);
+    }
+
+    const video_rgx = /^.*\.(avi|wmv|flv|mpg|mp4)$/i;
+    if( video_rgx.test(url) ) {
+      const video = document.createElement('video');
+      video.src = url;
+      video.controls = true;
+      video.muted = true;
+      video.autoplay = true;
+      video.loop = true;
+      this.addMediaEl(video);
     }
   }
 
   async getTagData(variable) {
-    let response = await fetch('https://nft.smartseal.io/api/authenticate/', {
+    const response = await fetch('https://nft.smartseal.io/api/authenticate/', {
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json'
@@ -106,8 +126,13 @@ export class SmartSealAuth extends HTMLElement {
       mode: 'cors',
       body: JSON.stringify(variable)
     });
+
     let data = await response.text();
     data = JSON.parse(data);
+
+
+    const isTest = this.getQueryVariable('testauth');
+    if(isTest) data.scan.auth_stat = 1;
 
     let statusIcon;
     let statusType;
@@ -121,7 +146,7 @@ export class SmartSealAuth extends HTMLElement {
       this.shadowRoot.getElementById('__status-box').style.display = 'block';
       if(data.tag.nft_owner_contact) this.shadowRoot.getElementById('contact').parentElement.style.display = '';
       this.setNftAddress(data.tag.chain_id, data.tag.nft_owner_address, data.tag.nft_contract_address);
-      this.setImage(data.tag.image_location);
+      this.setMedia(data.tag.image_location);
     } else {
       switch (data.scan.auth_stat) {
         case 0:
@@ -137,7 +162,7 @@ export class SmartSealAuth extends HTMLElement {
           this.shadowRoot.getElementById('redeem').style.display = 'block';
           this.setNftAddress(data.tag.chain_id, data.tag.nft_owner_address, data.tag.nft_contract_address);
           this.setRedemptionUrl(data.tag.nft_redemption_url);
-          this.setImage(data.tag.image_location);
+          this.setMedia(data.tag.image_location);
           break;
         case 2:
           statusIcon = iconSuccess;
@@ -146,7 +171,7 @@ export class SmartSealAuth extends HTMLElement {
           this.shadowRoot.getElementById('__status-box').style.display = 'block';
           this.setNftAddress(data.tag.chain_id, data.tag.nft_owner_address, data.tag.nft_contract_address);
           this.setRedemptionUrl(data.tag.nft_redemption_url);
-          this.setImage(data.tag.image_location);
+          this.setMedia(data.tag.image_location);
           break;
         case 3:
           statusIcon = iconSuccess;
@@ -154,7 +179,7 @@ export class SmartSealAuth extends HTMLElement {
           this.shadowRoot.getElementById('status-message').style.display = 'none';
           this.shadowRoot.getElementById('__status-box').style.display = 'block';
           this.setNftAddress(data.tag.chain_id, data.tag.nft_owner_address, data.tag.nft_contract_address);
-          this.setImage(data.tag.image_location);
+          this.setMedia(data.tag.image_location);
           break;
         case 4:
           statusIcon = iconError;
